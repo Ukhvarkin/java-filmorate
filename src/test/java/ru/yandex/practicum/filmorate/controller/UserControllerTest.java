@@ -4,21 +4,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest
 class UserControllerTest {
   UserController userController;
   User user;
 
   @BeforeEach
-  void start(){
+  void start() {
     userController = new UserController();
     user = generateUser();
   }
@@ -56,16 +55,16 @@ class UserControllerTest {
     updateUser.setEmail("yandex@yandex.ru");
     updateUser.setLogin("Yandex");
     updateUser.setName("Яндекс");
-    updateUser.setBirthday(LocalDate.of(1997,9,23));
+    updateUser.setBirthday(LocalDate.of(1997, 9, 23));
 
     int id = user.getId();
     updateUser.setId(id);
 
     userController.update(updateUser);
-    assertEquals(updateUser.getEmail(),user.getEmail(),"Почта не обновлена.");
-    assertEquals(updateUser.getLogin(),user.getLogin(),"Логин не обновлен.");
-    assertEquals(updateUser.getName(),user.getName(),"Имя не обновлено.");
-    assertEquals(updateUser.getBirthday(),user.getBirthday(),"Дата рождения не обновлена.");
+    assertEquals(updateUser.getEmail(), user.getEmail(), "Почта не обновлена.");
+    assertEquals(updateUser.getLogin(), user.getLogin(), "Логин не обновлен.");
+    assertEquals(updateUser.getName(), user.getName(), "Имя не обновлено.");
+    assertEquals(updateUser.getBirthday(), user.getBirthday(), "Дата рождения не обновлена.");
   }
 
   @Test

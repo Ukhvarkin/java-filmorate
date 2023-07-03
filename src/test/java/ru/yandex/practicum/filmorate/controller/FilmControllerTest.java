@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.controller;
 
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,13 +9,15 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class FilmControllerTest {
   FilmController filmController;
   Film film;
+
   @BeforeEach
-  void start(){
+  void start() {
     filmController = new FilmController();
     film = generateFilm();
   }
@@ -52,17 +53,17 @@ class FilmControllerTest {
     Film updateFilm = film;
     updateFilm.setName("Обновленный фильм.");
     updateFilm.setDescription("Обновленное описание.");
-    updateFilm.setReleaseDate(LocalDate.of(2020,12,12));
+    updateFilm.setReleaseDate(LocalDate.of(2020, 12, 12));
     updateFilm.setDuration(200);
 
     int id = film.getId();
     updateFilm.setId(id);
 
     filmController.update(updateFilm);
-    assertEquals(film.getName(),updateFilm.getName(), "Название не обновлено.");
-    assertEquals(film.getDescription(),updateFilm.getDescription(), "Описание не обновлено.");
-    assertEquals(film.getReleaseDate(),updateFilm.getReleaseDate(), "Дата релиза не обновилась.");
-    assertEquals(film.getDuration(),updateFilm.getDuration(), "Продолжительность не обновилась.");
+    assertEquals(film.getName(), updateFilm.getName(), "Название не обновлено.");
+    assertEquals(film.getDescription(), updateFilm.getDescription(), "Описание не обновлено.");
+    assertEquals(film.getReleaseDate(), updateFilm.getReleaseDate(), "Дата релиза не обновилась.");
+    assertEquals(film.getDuration(), updateFilm.getDuration(), "Продолжительность не обновилась.");
   }
 
   @Test
@@ -93,7 +94,7 @@ class FilmControllerTest {
   @DisplayName("Проверка корректности ввода даты релиза.")
   public void shouldThrowExceptionInReleaseData() {
     Film incorrectReleaseData = film;
-    incorrectReleaseData.setReleaseDate(LocalDate.of(1000,1,1));
+    incorrectReleaseData.setReleaseDate(LocalDate.of(1000, 1, 1));
     assertThrows(ValidationException.class, () -> {
               filmController.create(incorrectReleaseData);
             }

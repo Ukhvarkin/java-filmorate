@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +14,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class UserControllerTest {
-  UserController userController = new UserController();
+  UserController userController;
+  User user;
+
+  @BeforeEach
+  void start(){
+    userController = new UserController();
+    user = generateUser();
+  }
 
   private User generateUser() {
     return User.builder()
@@ -26,23 +34,45 @@ class UserControllerTest {
   }
 
   @Test
-  @DisplayName("Добавление пользователя.")
+  @DisplayName("Добавление пользователей и получение всего списка.")
   public void createUser() {
-    User user = User.builder()
-            .name("Имя")
-            .login("Login")
-            .email("mail@yandex.ru")
-            .birthday(LocalDate.of(2000, 12, 12))
-            .build();
+    User user1 = user;
+    User user2 = user;
+    User user3 = user;
+
+    userController.create(user1);
+    userController.create(user2);
+    userController.create(user3);
+
+    assertEquals(3, userController.findAll().size(), "Неверное количество пользователей.");
+  }
+
+  @Test
+  @DisplayName("Проверка на обновление пользователя.")
+  public void updateUserTest() {
     userController.create(user);
-    assertEquals(1, userController.findAll().size(), "Пользователь не добавлен.");
+
+    User updateUser = user;
+    updateUser.setEmail("yandex@yandex.ru");
+    updateUser.setLogin("Yandex");
+    updateUser.setName("Яндекс");
+    updateUser.setBirthday(LocalDate.of(1997,9,23));
+
+    int id = user.getId();
+    updateUser.setId(id);
+
+    userController.update(updateUser);
+    assertEquals(updateUser.getEmail(),user.getEmail(),"Почта не обновлена.");
+    assertEquals(updateUser.getLogin(),user.getLogin(),"Логин не обновлен.");
+    assertEquals(updateUser.getName(),user.getName(),"Имя не обновлено.");
+    assertEquals(updateUser.getBirthday(),user.getBirthday(),"Дата рождения не обновлена.");
   }
 
   @Test
   @DisplayName("Проверка корректности ввода почты.")
   public void shouldThrowExceptionInEmail() {
 
-    User incorrectEmail = generateUser();
+    User incorrectEmail = user;
     incorrectEmail.setEmail("yandex.ru");
     assertThrows(ValidationException.class, () -> {
               userController.create(incorrectEmail);
@@ -54,7 +84,7 @@ class UserControllerTest {
   @DisplayName("Проверка корректности ввода логина")
   public void shouldThrowExceptionInLogin() {
 
-    User incorrectLogin = generateUser();
+    User incorrectLogin = user;
     incorrectLogin.setLogin("");
     assertThrows(ValidationException.class, () -> {
               userController.create(incorrectLogin);
@@ -66,11 +96,12 @@ class UserControllerTest {
   @DisplayName("Проверка корректности ввода даты рождения")
   public void shouldThrowExceptionInData() {
 
-    User incorrectData = generateUser();
+    User incorrectData = user;
     incorrectData.setBirthday(LocalDate.of(5858, 12, 12));
     assertThrows(ValidationException.class, () -> {
               userController.create(incorrectData);
             }
     );
   }
+
 }

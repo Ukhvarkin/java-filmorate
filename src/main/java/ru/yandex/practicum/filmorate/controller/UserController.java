@@ -3,7 +3,12 @@ package ru.yandex.practicum.filmorate.controller;
 import javax.validation.Valid;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -22,14 +27,14 @@ public class UserController {
 
   @GetMapping
   public Collection<User> findAll() {
-    log.info("GET запрос.");
-    log.debug("Добавлен пользователь: {}.", users.size());
+    log.info("Получен запрос на получение списка всех пользователей.");
+    log.debug("Текущее количество пользователей: {}.", users.size());
     return new ArrayList<>(users.values());
   }
 
   @PostMapping
   public User create(@Valid @RequestBody User user) throws ValidationException {
-    log.info("Post запрос");
+    log.info("Получен запрос на добавление пользователя.");
     userValidator(user);
     user.setId(id);
     users.put(id, user);
@@ -40,7 +45,7 @@ public class UserController {
 
   @PutMapping
   public User update(@Valid @RequestBody User user) throws ValidationException {
-    log.info("PUT запрос");
+    log.info("Получен запрос на обновление пользователя.");
     userValidator(user);
     if (users.containsKey(user.getId())) {
       users.put(user.getId(), user);
@@ -77,7 +82,8 @@ public class UserController {
     if (user.getName() == null || user.getName().isBlank()) {
       user.setName(user.getLogin());
       log.debug("Пользователю присвоено имя: {}.", user.getName());
-    } else if (user.getBirthday().isAfter(LocalDate.now())) {
+    }
+    if (user.getBirthday().isAfter(LocalDate.now())) {
       String message = "Дата рождения не может быть в будущем.";
       log.warn(message);
       throw new ValidationException(message);

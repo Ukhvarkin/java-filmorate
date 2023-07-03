@@ -1,12 +1,16 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import javax.validation.Valid;
-
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,19 +22,19 @@ import java.util.Map;
 @Slf4j
 public class FilmController {
   private int id = 1;
-  private Map<Integer, Film> films = new HashMap<>();
+  private final Map<Integer, Film> films = new HashMap<>();
   private final LocalDate startFilmDate = LocalDate.of(1895, 12, 28);
 
   @GetMapping
   public Collection<Film> findAll() {
-    log.info("GET запрос.");
-    log.debug("Добавлен фильм: {}.", films.size());
+    log.info("Получен запрос на получение списка всех фильмов.");
+    log.debug("Текущее количество фильмов: {}.", films.size());
     return new ArrayList<>(films.values());
   }
 
   @PostMapping
   public Film create(@Valid @RequestBody Film film) throws ValidationException {
-    log.info("POST запрос.");
+    log.info("Получен запрос на добавление фильма.");
     filmValidator(film);
     film.setId(id);
     films.put(id, film);
@@ -41,11 +45,11 @@ public class FilmController {
 
   @PutMapping
   public Film update(@Valid @RequestBody Film film) throws ValidationException {
-    log.info("PUT запрос.");
+    log.info("Получен запрос на обновление фильма.");
     filmValidator(film);
     if (films.containsKey(film.getId())) {
       films.put(film.getId(), film);
-      log.info("Фильм обновлен.");
+      log.info("Фильм {} обновлен.",film.getName());
     } else {
       String message = "Фильма с таким id не найдено.";
       log.warn(message);

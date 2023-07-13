@@ -6,11 +6,13 @@ import org.junit.jupiter.api.Test;
 
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.time.LocalDate;
+import java.util.Collection;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class UserControllerTest {
   UserController userController;
@@ -18,7 +20,7 @@ class UserControllerTest {
 
   @BeforeEach
   void start() {
-    userController = new UserController();
+    userController = new UserController(new UserService(new InMemoryUserStorage()));
     user = generateUser();
   }
 
@@ -80,7 +82,7 @@ class UserControllerTest {
   }
 
   @Test
-  @DisplayName("Проверка корректности ввода логина")
+  @DisplayName("Проверка корректности ввода логина.")
   public void shouldThrowExceptionInLogin() {
 
     User incorrectLogin = user;
@@ -92,7 +94,7 @@ class UserControllerTest {
   }
 
   @Test
-  @DisplayName("Проверка корректности ввода даты рождения")
+  @DisplayName("Проверка корректности ввода даты рождения.")
   public void shouldThrowExceptionInData() {
 
     User incorrectData = user;
@@ -103,4 +105,78 @@ class UserControllerTest {
     );
   }
 
+  @Test
+  @DisplayName("Проверка добавления в список друзей.")
+  public void shouldAddFriend() {
+    User user1 = generateUser();
+    User user2 = generateUser();
+
+    userController.create(user1);
+    userController.create(user2);
+    userController.addFriend(1, 2);
+
+    assertTrue(user1.getFriends().contains(2), "Пользователи не добавлены в друзья друг другу");
+    assertTrue(user2.getFriends().contains(1), "Пользователи не добавлены в друзья друг другу");
+  }
+
+  @Test
+  @DisplayName("Проверка на удаление из списка друзей.")
+  public void shouldDeleteFriend() {
+    User user1 = generateUser();
+    User user2 = generateUser();
+
+    userController.create(user1);
+    userController.create(user2);
+    userController.addFriend(1, 2);
+    userController.deleteFriend(1, 2);
+
+    assertFalse(user1.getFriends().contains(2), "Пользователи не добавлены в друзья друг другу");
+    assertFalse(user2.getFriends().contains(1), "Пользователи не добавлены в друзья друг другу");
+  }
+
+  @Test
+  @DisplayName("Проверка на получения списка друзей.")
+  public void shouldFindAllUserFriends() {
+    User user1 = generateUser();
+    User user2 = generateUser();
+    User user3 = generateUser();
+
+    userController.create(user1);
+    userController.create(user2);
+    userController.create(user3);
+
+    int user1Id = user1.getId();
+    int user2Id = user2.getId();
+    int user3Id = user3.getId();
+
+    userController.addFriend(user1Id, user2Id);
+    userController.addFriend(user1Id, user3Id);
+    assertEquals(2, userController.getFriendsList(user1Id).size(), "Неверное количество.");
+
+    assertTrue(userController.getFriendsList(user1Id).contains(user2),
+            "Пользователи не добавлены в друзья друг другу");
+    assertTrue(userController.getFriendsList(user1Id).contains(user3),
+            "Пользователи не добавлены в друзья друг другу");
+  }
+
+  @Test
+  @DisplayName("Проверка на получения списка общих друзей.")
+  public void shouldFindCommonFriends() {
+    User user1 = generateUser();
+    User user2 = generateUser();
+    User user3 = generateUser();
+
+    userController.create(user1);
+    userController.create(user2);
+    userController.create(user3);
+
+    int user1Id = user1.getId();
+    int user2Id = user2.getId();
+    int user3Id = user3.getId();
+
+    userController.addFriend(user1Id, user3Id);
+    userController.addFriend(user2Id, user3Id);
+
+    assertTrue(userController.getCommonFriends(user2Id, user1Id).contains(user3), "Общего User не найдено.");
+  }
 }

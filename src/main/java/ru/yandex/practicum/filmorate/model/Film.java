@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Builder
@@ -25,5 +27,18 @@ public class Film {
   @Min(1)
   @NotNull(message = "Продолжительность не может быть пустым.")
   private long duration;
+  private final Set<Integer> likes = new HashSet<>();
+
+  public void addLike(int userId) {
+    likes.add(userId);
+  }
+
+  public void deleteLike(int userId) {
+    likes.remove(userId);
+  }
+
+  public int getFilmLikesCount() {
+    return likes.size();
+  }
 
 }

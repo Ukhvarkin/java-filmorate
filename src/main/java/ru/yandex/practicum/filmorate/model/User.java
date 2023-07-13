@@ -9,6 +9,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Builder
@@ -23,4 +25,14 @@ public class User {
   private String name;
   @Past
   private LocalDate birthday;
+  private final Set<Integer> friends = new HashSet<>();
+
+  public void addFriend(int userId) {
+    friends.add(userId);
+  }
+
+  public void deleteFriend(int userId) {
+    friends.remove(userId);
+  }
+
 }

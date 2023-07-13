@@ -1,61 +1,103 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/films")
 @Slf4j
 public class FilmController {
-  private int id = 1;
-  private final Map<Integer, Film> films = new HashMap<>();
   private final LocalDate startFilmDate = LocalDate.of(1895, 12, 28);
+
+  private final FilmService filmService;
+
+  @Autowired
+  public FilmController(FilmService filmService) {
+    this.filmService = filmService;
+  }
 
   @GetMapping
   public Collection<Film> findAll() {
     log.info("Получен запрос на получение списка всех фильмов.");
-    log.debug("Текущее количество фильмов: {}.", films.size());
-    return new ArrayList<>(films.values());
+    return filmService.findAll();
+  }
+
+  @GetMapping("/{id}")
+  public Film getFilm(@PathVariable int id) {
+    log.info("Получен запрос на получение фильма по id.");
+    return filmService.getFilmById(id);
+  }
+
+  @GetMapping("/popular")
+  public Collection<Film> findTopFilms(@RequestParam(defaultValue = "10", required = false) int count) {
+    log.info("Получен запрос на получение списка топ фильмов.");
+    if (count <= 0) {
+      throw new ValidationException("Введите значение больше 0");
+    }
+    return filmService.findTopFilms(count);
   }
 
   @PostMapping
   public Film create(@Valid @RequestBody Film film) throws ValidationException {
     log.info("Получен запрос на добавление фильма.");
     filmValidator(film);
-    film.setId(id);
-    films.put(id, film);
-    id++;
-    log.debug("Добавлен фильм: {}.", film.getName());
+    filmService.create(film);
     return film;
+  }
+
+  @PutMapping("/{id}/like/{userId}")
+  public void addLike(@PathVariable int id,
+                      @PathVariable int userId) throws FilmNotFoundException, UserNotFoundException {
+    log.info("Получен запрос на добавление лайка к фильму.");
+    filmCheckerId(id);
+    userCheckerId(userId);
+    filmService.addLike(userId, id);
   }
 
   @PutMapping
   public Film update(@Valid @RequestBody Film film) throws ValidationException {
     log.info("Получен запрос на обновление фильма.");
     filmValidator(film);
-    if (films.containsKey(film.getId())) {
-      films.put(film.getId(), film);
-      log.info("Фильм {} обновлен.",film.getName());
-    } else {
-      String message = "Фильма с таким id не найдено.";
-      log.warn(message);
-      throw new ValidationException(message);
+    return filmService.update(film);
+  }
+
+  @DeleteMapping("/{id}/like/{userId}")
+  public void deleteLike(@PathVariable int id,
+                         @PathVariable int userId) throws FilmNotFoundException, UserNotFoundException {
+    log.info("Получен запрос на удаление лайка у фильма.");
+    filmCheckerId(id);
+    userCheckerId(userId);
+    filmService.deleteLike(userId, id);
+  }
+
+  private void userCheckerId(int userId) throws ValidationException {
+    if (userId <= 0) {
+      throw new UserNotFoundException("Не найден пользователь с id: " + userId);
     }
-    return film;
+  }
+
+  private void filmCheckerId(int filmId) throws ValidationException {
+    if (filmId <= 0) {
+      throw new UserNotFoundException("Не найден фильм с id: " + filmId);
+    }
   }
 
   private void filmValidator(Film film) throws ValidationException {

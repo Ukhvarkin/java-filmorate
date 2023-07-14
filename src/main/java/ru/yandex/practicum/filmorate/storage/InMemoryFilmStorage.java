@@ -13,9 +13,7 @@ import java.util.Map;
 @Slf4j
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
-  private int id = 1;
   private final Map<Integer, Film> films = new HashMap<>();
-
 
   @Override
   public Collection<Film> findAll() {
@@ -26,23 +24,15 @@ public class InMemoryFilmStorage implements FilmStorage {
 
   @Override
   public Film create(Film film) throws ValidationException {
-    film.setId(id);
-    films.put(id, film);
-    id++;
+    films.put(film.getId(), film);
     log.debug("Добавлен фильм: id:{}. {}.", film.getId(), film.getName());
     return film;
   }
 
   @Override
   public Film update(Film film) {
-    if (films.containsKey(film.getId())) {
-      films.put(film.getId(), film);
-      log.info("Фильм {} обновлен.", film.getName());
-    } else {
-      String message = "Фильма с id =" + film.getId() + ", не найдено.";
-      log.warn(message);
-      throw new FilmNotFoundException(message);
-    }
+    films.put(film.getId(), film);
+    log.info("Фильм {} обновлен.", film.getName());
     return film;
   }
 
@@ -52,5 +42,10 @@ public class InMemoryFilmStorage implements FilmStorage {
       throw new FilmNotFoundException("Не найден фильм с id: " + filmId);
     }
     return films.get(filmId);
+  }
+
+  @Override
+  public boolean containsFilm(int filmId) {
+    return films.containsKey(filmId);
   }
 }

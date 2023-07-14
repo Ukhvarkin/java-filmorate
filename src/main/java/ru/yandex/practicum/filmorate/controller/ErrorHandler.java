@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -9,19 +10,24 @@ import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.service.ErrorResponse;
 
+@Slf4j
 @RestControllerAdvice
 public class ErrorHandler {
 
   @ExceptionHandler()
   @ResponseStatus(HttpStatus.NOT_FOUND)
   public ErrorResponse handlePostNotFoundException(FilmNotFoundException e) {
-    return new ErrorResponse("Фильм не найден.", e.getMessage());
+    String message = "Фильм не найден.";
+    log.error(message, e);
+    return new ErrorResponse(message, e.getMessage());
   }
 
   @ExceptionHandler()
   @ResponseStatus(HttpStatus.NOT_FOUND)
   public ErrorResponse handleUserNotFoundException(UserNotFoundException e) {
-    return new ErrorResponse("Пользователь не найден.", e.getMessage());
+    String message = "Пользователь не найден.";
+    log.error(message, e);
+    return new ErrorResponse(message, e.getMessage());
   }
 
   @ExceptionHandler()
@@ -34,6 +40,8 @@ public class ErrorHandler {
   @ExceptionHandler()
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public ErrorResponse handleAnyElseException(final Exception e) {
-    return new ErrorResponse("Cервер не смог обработать запрос", e.getMessage());
+    String message = "Cервер не смог обработать запрос.";
+    log.error(message, e);
+    return new ErrorResponse(message, e.getMessage());
   }
 }

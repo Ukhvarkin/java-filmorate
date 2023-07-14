@@ -15,4 +15,6 @@ public interface FilmStorage {
   Film update(Film film) throws ValidationException, FilmNotFoundException;
 
   Film getFilm(int filmId) throws FilmNotFoundException;
+
+  boolean containsFilm(int filmId);
 }

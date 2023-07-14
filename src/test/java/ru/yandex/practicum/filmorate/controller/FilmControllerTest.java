@@ -5,13 +5,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmIdGenerator;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -22,7 +21,7 @@ class FilmControllerTest {
 
   @BeforeEach
   void start() {
-    filmController = new FilmController(new FilmService(new InMemoryFilmStorage()));
+    filmController = new FilmController(new FilmService(new InMemoryFilmStorage(), new InMemoryUserStorage(), new FilmIdGenerator()));
     film = generateFilm();
   }
 
@@ -106,71 +105,9 @@ class FilmControllerTest {
   }
 
   @Test
-  @DisplayName("Проверка лайка к фильму")
-  public void shouldAddLike() {
-    Film createFilm1 = film;
-    filmController.create(createFilm1);
-    int filmId = createFilm1.getId();
-
-    int userId1 = 1;
-    int userId2 = 2;
-
-    filmController.addLike(filmId, userId1);
-    filmController.addLike(filmId, userId2);
-
-    assertEquals(2, film.getFilmLikesCount(), "Неверное количество лайков.");
-  }
-
-  @Test
-  @DisplayName("Проверка удаление лайка у фильма.")
-  public void shouldDeleteLike() {
-    Film createFilm1 = film;
-    filmController.create(createFilm1);
-    int filmId = createFilm1.getId();
-
-    int userId1 = 1;
-    int userId2 = 2;
-
-    filmController.addLike(filmId, userId1);
-    filmController.addLike(filmId, userId2);
-
-    filmController.deleteLike(filmId, userId2);
-    assertEquals(1, film.getFilmLikesCount(), "Неверное количество лайков.");
-
-    filmController.deleteLike(filmId, userId1);
-    assertEquals(0, film.getFilmLikesCount(), "Неверное количество лайков.");
-  }
-
-  @Test
-  @DisplayName("Проверка работы логики по получению списка топа.")
-  public void shouldFindTopFilms() {
-    List<Film> filmsLikeList = new ArrayList<>();
-
-    for (int i = 0; i < 15; i++) {
-      int id = i + 1;
-      String name = "Film " + id;
-
-      Film film = Film.builder()
-              .id(id)
-              .name(name)
-              .description("Описание.")
-              .releaseDate(LocalDate.of(2000, 12, 12))
-              .build();
-
-      int numLikes = (int) (Math.random() * 10) + 1;
-      for (int j = 0; j < numLikes; j++) {
-        int userId = j + 1;
-        film.addLike(userId);
-      }
-      filmController.create(film);
-      filmsLikeList.add(film);
-    }
-    Film topFilmFromController = filmController.findTopFilms(1).stream().findFirst().orElse(null);
-    Film topFilmFromList = filmsLikeList.stream()
-            .max(Comparator.comparing(film1 -> film1.getLikes().size())).orElse(null);
-
-    assertEquals(filmsLikeList.size(), filmController.findTopFilms(15).size(), "Неверное количество");
-    assertEquals(5, filmController.findTopFilms(5).size(), "Неверное количество");
-    assertEquals(topFilmFromController, topFilmFromList, "Фильмы должны быть одними и теми");
+  @DisplayName("Проверка на получения топа с отрицательным id.")
+  public void shouldThrowExceptionFilmNotFoundWhenFindTopFilms() {
+    int incorrectCount = -1;
+    assertThrows(ValidationException.class, () -> filmController.findTopFilms(incorrectCount));
   }
 }

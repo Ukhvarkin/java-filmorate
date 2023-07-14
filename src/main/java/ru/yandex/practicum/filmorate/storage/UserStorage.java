@@ -14,4 +14,6 @@ public interface UserStorage {
   User update(User user) throws ValidationException, UserNotFoundException;
 
   User getUser(int userId) throws UserNotFoundException;
+
+  boolean containsUser(int userId);
 }

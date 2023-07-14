@@ -13,7 +13,6 @@ import java.util.Map;
 @Slf4j
 @Component
 public class InMemoryUserStorage implements UserStorage {
-  private int id = 1;
   private final Map<Integer, User> users = new HashMap<>();
 
   @Override
@@ -24,23 +23,15 @@ public class InMemoryUserStorage implements UserStorage {
 
   @Override
   public User create(User user) throws ValidationException {
-    user.setId(id);
-    users.put(id, user);
-    id++;
+    users.put(user.getId(), user);
     log.debug("Добавлен пользователь: id:{}. {}.", user.getId(), user.getLogin());
     return user;
   }
 
   @Override
   public User update(User user) {
-    if (users.containsKey(user.getId())) {
-      users.put(user.getId(), user);
-      log.info("Пользователь обновлен.");
-    } else {
-      String message = "Пользователя с id = " + user.getId() + ", не найдено.";
-      log.warn(message);
-      throw new UserNotFoundException(message);
-    }
+    log.info("Пользователь обновлен.");
+    users.put(user.getId(), user);
     return user;
   }
 
@@ -50,5 +41,10 @@ public class InMemoryUserStorage implements UserStorage {
       throw new UserNotFoundException("Не найден пользователя с id = " + userId);
     }
     return users.get(userId);
+  }
+
+  @Override
+  public boolean containsUser(int userId) {
+    return users.containsKey(userId);
   }
 }

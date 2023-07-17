@@ -3,9 +3,12 @@ package ru.yandex.practicum.filmorate.controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmIdGenerator;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.time.LocalDate;
 
@@ -18,7 +21,7 @@ class FilmControllerTest {
 
   @BeforeEach
   void start() {
-    filmController = new FilmController();
+    filmController = new FilmController(new FilmService(new InMemoryFilmStorage(), new InMemoryUserStorage(), new FilmIdGenerator()));
     film = generateFilm();
   }
 
@@ -101,4 +104,10 @@ class FilmControllerTest {
     );
   }
 
+  @Test
+  @DisplayName("Проверка на получения топа с отрицательным id.")
+  public void shouldThrowExceptionFilmNotFoundWhenFindTopFilms() {
+    int incorrectCount = -1;
+    assertThrows(ValidationException.class, () -> filmController.findTopFilms(incorrectCount));
+  }
 }

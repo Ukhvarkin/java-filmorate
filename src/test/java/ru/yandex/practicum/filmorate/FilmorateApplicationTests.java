@@ -97,8 +97,8 @@ class FilmorateApplicationTests {
                 .duration(120)
                 .releaseDate(LocalDate.of(2000, 2, 20))
                 .mpa(Mpa.builder()
-                        .id(1).
-                        name("G")
+                        .id(1)
+                        .name("G")
                         .description("У фильма нет возрастных ограничений.").build())
                 .build();
     }
@@ -111,8 +111,8 @@ class FilmorateApplicationTests {
                 .duration(120)
                 .releaseDate(LocalDate.of(2000, 2, 20))
                 .mpa(Mpa.builder()
-                        .id(5).
-                        name("NC-17")
+                        .id(5)
+                        .name("NC-17")
                         .description("Лицам до 18 лет просмотр запрещён.").build())
                 .build();
     }

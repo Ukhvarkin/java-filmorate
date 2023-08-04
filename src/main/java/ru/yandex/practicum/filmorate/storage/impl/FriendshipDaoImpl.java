@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.storage.dao.FriendshipDao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+
 @Component
 public class FriendshipDaoImpl implements FriendshipDao {
     private final JdbcTemplate jdbcTemplate;
@@ -33,7 +34,7 @@ public class FriendshipDaoImpl implements FriendshipDao {
     @Override
     public List<Integer> getFriends(int userId) {
         String sql = "SELECT friend_id FROM user_friends WHERE user_id = ?";
-        return jdbcTemplate.query(sql,this::makeId, userId);
+        return jdbcTemplate.query(sql, this::makeId, userId);
     }
 
     private int makeId(ResultSet rs, int rowNum) throws SQLException {

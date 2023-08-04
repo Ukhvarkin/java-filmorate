@@ -6,6 +6,7 @@ import ru.yandex.practicum.filmorate.storage.dao.LikesDao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 @Component
 public class LikesDaoImpl implements LikesDao {
 

@@ -98,8 +98,8 @@ public class UserService {
     public User getUserById(int userId) throws UserNotFoundException {
         validateUserId(userId);
         return userStorage.findUserById(userId)
-                .orElseThrow(() -> new UserNotFoundException
-                        (String.format("Пользователь с id = %d, не найден.", userId)));
+                .orElseThrow(() -> new UserNotFoundException(
+                        String.format("Пользователь с id = %d, не найден.", userId)));
     }
 
     private void userValidator(User user) throws ValidationException {

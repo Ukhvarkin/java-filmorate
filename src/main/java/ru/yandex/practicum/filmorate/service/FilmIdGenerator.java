@@ -4,11 +4,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class FilmIdGenerator {
-  private int id = 1;
+    private int id = 1;
 
-  public int generateId() {
-    int generatedId = id;
-    id++;
-    return generatedId;
-  }
+    public int generateId() {
+        int generatedId = id;
+        id++;
+        return generatedId;
+    }
 }

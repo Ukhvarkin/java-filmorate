@@ -16,66 +16,67 @@ import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
 @Slf4j
 public class UserController {
-  private final UserService userService;
+    private final UserService userService;
 
-  @Autowired
-  public UserController(UserService userService) {
-    this.userService = userService;
-  }
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
-  @GetMapping
-  public Collection<User> findAll() {
-    log.info("Получен запрос на получение списка всех пользователей.");
-    return userService.findAll();
-  }
+    @GetMapping
+    public List<User> findAll() {
+        log.info("Получен запрос на получение списка всех пользователей.");
+        return userService.findAll();
+    }
 
-  @GetMapping("/{id}")
-  public User getUser(@PathVariable int id) {
-    log.info("Получен запрос на получение пользователя.");
-    return userService.getUserById(id);
-  }
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable int id) {
+        log.info("Получен запрос на получение пользователя.");
+        return userService.getUserById(id);
+    }
 
-  @GetMapping("/{id}/friends")
-  public Collection<User> getFriendsList(@PathVariable int id) {
-    log.info("Получен запрос на получение списка друзей пользователя.");
-    return userService.getFriendsList(id);
-  }
+    @GetMapping("/{id}/friends")
+    public Collection<User> getFriendsList(@PathVariable int id) {
+        log.info("Получен запрос на получение списка друзей пользователя.");
+        return userService.getFriendsList(id);
+    }
 
-  @GetMapping("{id}/friends/common/{otherId}")
-  public Collection<User> getCommonFriends(@PathVariable int id,
-                                           @PathVariable int otherId) {
-    log.info("Получен запрос на получение списка всех пользователей.");
-    return userService.getCommonFriends(id, otherId);
-  }
+    @GetMapping("{id}/friends/common/{otherId}")
+    public Collection<User> getCommonFriends(@PathVariable int id,
+                                             @PathVariable int otherId) {
+        log.info("Получен запрос на получение списка всех пользователей.");
+        return userService.getCommonFriends(id, otherId);
+    }
 
-  @PostMapping
-  public User create(@Valid @RequestBody User user) throws ValidationException {
-    log.info("Получен запрос на добавление пользователя.");
-    return userService.create(user);
-  }
+    @PostMapping
+    public User create(@Valid @RequestBody User user) throws ValidationException {
+        log.info("Получен запрос на добавление пользователя.");
+        return userService.create(user);
+    }
 
-  @PutMapping
-  public User update(@Valid @RequestBody User user) throws ValidationException {
-    log.info("Получен запрос на обновление пользователя.");
-    return userService.update(user);
-  }
+    @PutMapping
+    public User update(@Valid @RequestBody User user) throws ValidationException {
+        log.info("Получен запрос на обновление пользователя.");
+        return userService.update(user);
+    }
 
-  @PutMapping("/{id}/friends/{friendId}")
-  public void addFriend(@PathVariable int id,
-                        @PathVariable int friendId) {
-    log.info("Получен запрос на добавление в друзья.");
-    userService.addFriend(id, friendId);
-  }
+    @PutMapping("/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable int id,
+                          @PathVariable int friendId) {
+        log.info("Получен запрос на добавление в друзья.");
+        userService.addFriend(id, friendId);
+    }
 
-  @DeleteMapping("{id}/friends/{friendId}")
-  public void deleteFriend(@PathVariable int id,
-                           @PathVariable int friendId) {
-    log.info("Получен запрос на удаление из друзей.");
-    userService.deleteFriend(id, friendId);
-  }
+    @DeleteMapping("{id}/friends/{friendId}")
+    public void deleteFriend(@PathVariable int id,
+                             @PathVariable int friendId) {
+        log.info("Получен запрос на удаление из друзей.");
+        userService.deleteFriend(id, friendId);
+    }
 }

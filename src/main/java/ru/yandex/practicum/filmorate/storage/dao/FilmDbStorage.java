@@ -13,6 +13,7 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -53,7 +54,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private void insertFilmGenres(Film film) {
-        String sql = "MERGE INTO  film_genre (film_id, genre_id) VALUES (?, ?)";
+        String sql = "MERGE INTO  film_genres (film_id, genre_id) VALUES (?, ?)";
         for (Genre genre : film.getGenres()) {
             jdbcTemplate.update(sql, film.getId(), genre.getId());
         }
@@ -83,7 +84,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     public void cleanOldFilmGenresRecords(Film film) {
-        String sqlQuery = "DELETE FROM film_genre WHERE film_id = ?";
+        String sqlQuery = "DELETE FROM film_genres WHERE film_id = ?";
         jdbcTemplate.update(sqlQuery, film.getId());
     }
 
@@ -112,7 +113,6 @@ public class FilmDbStorage implements FilmStorage {
         int duration = rs.getInt("duration");
 
         Mpa mpa = findMpaById(rs.getInt("mpa_id"));
-        Set<Integer> likes = findLikesByFilmId(id);
         List<Genre> genres = findGenresByFilmId(id);
 
         return Film.builder()
@@ -131,13 +131,8 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.queryForObject(sql, this::makeMpa, mpaId);
     }
 
-    private Set<Integer> findLikesByFilmId(int filmId) {
-        String sql = "SELECT user_id FROM likes WHERE film_id = ?";
-        return new HashSet<>(jdbcTemplate.queryForList(sql, Integer.class, filmId));
-    }
-
     private List<Genre> findGenresByFilmId(int filmId) {
-        String sql = "SELECT DISTINCT g.genre_id, g.name FROM film_genre AS fg" +
+        String sql = "SELECT DISTINCT g.genre_id, g.name FROM film_genres AS fg" +
                 " JOIN genres AS g ON fg.genre_id = g.genre_id WHERE fg.film_id = ?";
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeGenre(rs), filmId);
     }

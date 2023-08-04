@@ -30,8 +30,8 @@ public class LikesDaoImpl implements LikesDao {
 
     @Override
     public int likesCount(int filmId) {
-        String sql = "SELECT user_id from likes WHERE film_id = ?";
-        return jdbcTemplate.query(sql, this::makeId, filmId).size();
+        String sql = "SELECT COUNT(*) from likes WHERE film_id = ?";
+        return jdbcTemplate.queryForObject(sql, Integer.class, filmId);
     }
 
     private int makeId(ResultSet rs, int rowNum) throws SQLException {

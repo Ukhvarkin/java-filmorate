@@ -11,19 +11,19 @@ import java.util.List;
 @Service
 public class MpaService {
 
-    private final MpaDao mpaRatingDao;
+    private final MpaDao mpaDao;
 
     public MpaService(MpaDao mpaRatingDao) {
-        this.mpaRatingDao = mpaRatingDao;
+        this.mpaDao = mpaRatingDao;
     }
 
     public List<Mpa> findAll() {
-        return mpaRatingDao.findAll();
+        return mpaDao.findAll();
     }
 
-    public Mpa findMpaServiceById(int id) {
+    public Mpa findMpaById(int id) {
         try {
-            return mpaRatingDao.findMpaServiceById(id);
+            return mpaDao.findMpaById(id);
         } catch (EmptyResultDataAccessException e) {
             throw new IllegalIdException("Не найдено mpa c id =" + id);
         }

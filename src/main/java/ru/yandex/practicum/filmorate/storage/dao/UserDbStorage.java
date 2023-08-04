@@ -3,15 +3,16 @@ package ru.yandex.practicum.filmorate.storage.dao;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.enums.FriendshipStatus;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.model.FriendshipStatus;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -78,11 +79,11 @@ public class UserDbStorage implements UserStorage {
                 .build();
     }
 
-    private FriendshipStatus getFriendshipStatusById(int friendshipStatusId) {
-        String sql = "SELECT * FROM friendship_status WHERE friendship_status_id = ?";
-        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> FriendshipStatus.builder()
-                .id(rs.getInt("friendship_status_id"))
-                .status(rs.getString("status"))
-                .build(), friendshipStatusId);
+    @Override
+    public Collection<User> getCommonFriends(int userId, int friendId) throws UserNotFoundException {
+        String sql = "SELECT u.* FROM users u" +
+                " JOIN user_friends uf1 ON u.user_id = uf1.friend_id AND uf1.user_id = ?" +
+                " JOIN user_friends uf2 ON u.user_id = uf2.friend_id AND uf2.user_id = ?";
+        return jdbcTemplate.query(sql, this::makeUser, userId, friendId);
     }
 }

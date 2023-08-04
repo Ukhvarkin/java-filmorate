@@ -10,6 +10,3 @@ MERGE INTO mpa (mpa_id, name, description) VALUES (2, 'PG', 'Детям реко
 MERGE INTO mpa (mpa_id, name, description) VALUES (3, 'PG-13', 'Детям до 13 лет просмотр не желателен.');
 MERGE INTO mpa (mpa_id, name, description) VALUES (4, 'R', 'Лицам до 17 лет просматривать фильм можно только в присутствии взрослого.');
 MERGE INTO mpa (mpa_id, name, description) VALUES (5, 'NC-17', 'Лицам до 18 лет просмотр запрещён.');
-
-MERGE INTO friendship_status (friendship_status_id, status) VALUES (1, 'неподтверждённая');
-MERGE INTO friendship_status (friendship_status_id, status) VALUES (2, 'подтверждённая');

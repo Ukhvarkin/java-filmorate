@@ -73,26 +73,14 @@ public class UserService {
 
         Optional<User> optionalUser = userStorage.findUserById(userId);
         if (optionalUser.isPresent()) {
-            for (int friendId : friendshipDao.getFriends(userId)) {
-                if (userStorage.findUserById(friendId).isPresent())
-                    allFriends.add(userStorage.findUserById(friendId).get());
-            }
+            List<User> friends = friendshipDao.getFriends(userId);
+            allFriends.addAll(friends);
         }
         return allFriends;
     }
 
     public Collection<User> getCommonFriends(int userId, int friendId) throws UserNotFoundException {
-        List<Integer> userFriends = friendshipDao.getFriends(userId);
-        List<Integer> friendFriends = friendshipDao.getFriends(friendId);
-
-        List<User> commonFriends = new ArrayList<>();
-
-        for (int id : userFriends) {
-            if (friendFriends.contains(id)) {
-                userStorage.findUserById(id).ifPresent(commonFriends::add);
-            }
-        }
-        return commonFriends;
+        return userStorage.getCommonFriends(userId, friendId);
     }
 
     public User getUserById(int userId) throws UserNotFoundException {

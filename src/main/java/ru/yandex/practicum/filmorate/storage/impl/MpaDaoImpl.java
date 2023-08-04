@@ -23,7 +23,7 @@ public class MpaDaoImpl implements MpaDao {
         return jdbcTemplate.query(sql, this::makeMpa);
     }
 
-    public Mpa findMpaServiceById(int id) {
+    public Mpa findMpaById(int id) {
         String sql = "SELECT * FROM mpa WHERE mpa_id = ?";
         return jdbcTemplate.queryForObject(sql, this::makeMpa, id);
     }

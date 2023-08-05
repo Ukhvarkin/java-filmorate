@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.storage.dao;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.enums.FriendshipStatus;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -68,7 +67,6 @@ public class UserDbStorage implements UserStorage {
         String login = rs.getString("login");
         String name = rs.getString("name");
         LocalDate birthday = rs.getDate("birthday").toLocalDate();
-
 
         return User.builder()
                 .id(id)

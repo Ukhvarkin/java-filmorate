@@ -11,6 +11,4 @@ public interface FriendshipDao {
     void deleteFriend(int userId, int friendId);
 
     List<User> getFriends(int userId);
-
-    FriendshipStatus getFriendshipStatusById(int friendshipStatusId);
 }

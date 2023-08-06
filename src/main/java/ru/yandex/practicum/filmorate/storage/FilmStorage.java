@@ -4,6 +4,7 @@ import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,4 +19,6 @@ public interface FilmStorage {
     Optional<Film> findFilmById(int filmId) throws FilmNotFoundException;
 
     boolean containsFilm(int filmId);
+
+    Collection<Film> findTopFilms(int count);
 }

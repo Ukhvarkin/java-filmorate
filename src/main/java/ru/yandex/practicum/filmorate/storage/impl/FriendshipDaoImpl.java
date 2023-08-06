@@ -57,17 +57,6 @@ public class FriendshipDaoImpl implements FriendshipDao {
         return 1;
     }
 
-    @Override
-    public FriendshipStatus getFriendshipStatusById(int friendshipStatusId) {
-        if (friendshipStatusId == 1) {
-            return FriendshipStatus.PENDING;
-        } else if (friendshipStatusId == 2) {
-            return FriendshipStatus.CONFIRMED;
-        } else {
-            throw new ValidationException("Не найден статус дружбы с id = " + friendshipStatusId);
-        }
-    }
-
     private User makeUser(ResultSet rs, int rowNum) throws SQLException {
         int id = rs.getInt("user_id");
         String email = rs.getString("email");

@@ -13,6 +13,7 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -153,5 +154,16 @@ public class FilmDbStorage implements FilmStorage {
                 .id(id)
                 .name(name)
                 .build();
+    }
+
+    public Collection<Film> findTopFilms(int count) throws FilmNotFoundException {
+        String sql = "SELECT f.*, COUNT(l.film_id) as likes_count " +
+                "FROM films f " +
+                "LEFT JOIN likes l ON f.film_id = l.film_id " +
+                "GROUP BY f.film_id " +
+                "ORDER BY likes_count DESC " +
+                "LIMIT ?";
+
+        return jdbcTemplate.query(sql, this::makeFilm, count);
     }
 }

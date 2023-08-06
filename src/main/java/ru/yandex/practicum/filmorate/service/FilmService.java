@@ -73,10 +73,7 @@ public class FilmService {
     }
 
     public Collection<Film> findTopFilms(int count) throws FilmNotFoundException {
-        return filmStorage.findAll().stream()
-                .sorted((p0, p1) -> (likesDao.likesCount(p1.getId()) - likesDao.likesCount(p0.getId())))
-                .limit(count)
-                .collect(Collectors.toList());
+        return filmStorage.findTopFilms(count);
     }
 
     public Film findFilmById(int id) throws FilmNotFoundException {

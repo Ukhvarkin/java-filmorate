@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.storage.dao;
 
-import ru.yandex.practicum.filmorate.enums.FriendshipStatus;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.List;
